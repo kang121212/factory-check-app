@@ -1,1 +1,0 @@
-# factory-check-app
