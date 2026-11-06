@@ -21,7 +21,13 @@ export default function LoginScreen({ navigation }) {
     }
 
     try {
-      const savedUser = await AsyncStorage.getItem('@user_account');
+      let savedUser = null;
+      
+      if (Platform.OS === 'web') {
+        savedUser = localStorage.getItem('@user_account');
+      } else {
+        savedUser = await AsyncStorage.getItem('@user_account');
+      }
       
       if (!savedUser) {
         showAlert('로그인 실패', '등록된 계정이 없습니다. 회원가입을 진행해주세요.');
@@ -66,14 +72,14 @@ export default function LoginScreen({ navigation }) {
       />
 
       <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-        <Text style={styles.buttonText}>로그인</Text>
+        <Text style={styles.buttonText}>로그인하기</Text>
       </TouchableOpacity>
 
       <TouchableOpacity 
-        style={styles.registerButton} 
+        style={styles.registerLinkButton} 
         onPress={() => navigation.navigate('Register')}
       >
-        <Text style={styles.registerText}>계정이 없으신가요? 회원가입하기</Text>
+        <Text style={styles.registerLinkText}>계정이 없으신가요? 신규 사원 등록</Text>
       </TouchableOpacity>
     </View>
   );
@@ -84,8 +90,8 @@ const styles = StyleSheet.create({
   title: { fontSize: 24, fontWeight: 'bold', color: '#2f3640', marginBottom: 8, textAlign: 'center' },
   subtitle: { fontSize: 14, color: '#718093', marginBottom: 30, textAlign: 'center' },
   input: { backgroundColor: '#fff', padding: 14, borderRadius: 10, borderWidth: 1, borderColor: '#dcdde1', marginBottom: 12, fontSize: 15, color: '#2f3640' },
-  loginButton: { backgroundColor: '#3742fa', padding: 15, borderRadius: 10, alignItems: 'center', marginTop: 10, cursor: 'pointer' },
+  loginButton: { backgroundColor: '#3742fa', padding: 15, borderRadius: 10, alignItems: 'center', marginTop: 10 },
   buttonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
-  registerButton: { marginTop: 20, alignItems: 'center', cursor: 'pointer' },
-  registerText: { color: '#57606f', fontSize: 14, fontWeight: '600' },
+  registerLinkButton: { marginTop: 20, alignItems: 'center', padding: 10 },
+  registerLinkText: { color: '#57606f', fontSize: 14, fontWeight: '600' },
 });

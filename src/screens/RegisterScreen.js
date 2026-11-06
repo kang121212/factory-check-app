@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, Platform } 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function RegisterScreen({ navigation }) {
+  const [name, setName] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -16,14 +17,19 @@ export default function RegisterScreen({ navigation }) {
   };
 
   const handleRegister = async () => {
-    if (!username.trim() || !password.trim()) {
-      showAlert('알림', '아이디와 비밀번호를 모두 입력해주세요.');
+    if (!name.trim() || !username.trim() || !password.trim()) {
+      showAlert('알림', '이름, 아이디, 비밀번호를 모두 입력해주세요.');
       return;
     }
 
     try {
-      const userData = { username, password };
-      await AsyncStorage.setItem('@user_account', JSON.stringify(userData));
+      const userData = { name, username, password };
+      
+      if (Platform.OS === 'web') {
+        localStorage.setItem('@user_account', JSON.stringify(userData));
+      } else {
+        await AsyncStorage.setItem('@user_account', JSON.stringify(userData));
+      }
       
       showAlert('완료', '회원가입이 완료되었습니다! 로그인해 주세요.', () => {
         navigation.goBack();
@@ -38,6 +44,13 @@ export default function RegisterScreen({ navigation }) {
     <View style={styles.container}>
       <Text style={styles.title}>신규 사원 등록</Text>
 
+      <TextInput
+        style={styles.input}
+        placeholder="사원 이름 입력"
+        placeholderTextColor="#a4b0be"
+        value={name}
+        onChangeText={setName}
+      />
       <TextInput
         style={styles.input}
         placeholder="생성할 사원 아이디"
@@ -66,6 +79,6 @@ const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: 'center', padding: 20, backgroundColor: '#f5f6fa' },
   title: { fontSize: 22, fontWeight: 'bold', color: '#2f3640', marginBottom: 20, textAlign: 'center' },
   input: { backgroundColor: '#fff', padding: 14, borderRadius: 10, borderWidth: 1, borderColor: '#dcdde1', marginBottom: 12, fontSize: 15, color: '#2f3640' },
-  registerButton: { backgroundColor: '#44bd32', padding: 15, borderRadius: 10, alignItems: 'center', marginTop: 10, cursor: 'pointer' },
+  registerButton: { backgroundColor: '#44bd32', padding: 15, borderRadius: 10, alignItems: 'center', marginTop: 10 },
   buttonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
 });

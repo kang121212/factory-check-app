@@ -2,14 +2,10 @@ import React, { useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Alert, Platform, ScrollView } from 'react-native';
 
 export default function MainScreen({ navigation }) {
-  // 헤더 오른쪽에 로그아웃 버튼 배치
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <TouchableOpacity 
-          onPress={handleLogout}
-          style={styles.logoutBtn}
-        >
+        <TouchableOpacity onPress={handleLogout} style={styles.logoutBtn}>
           <Text style={styles.logoutText}>로그아웃</Text>
         </TouchableOpacity>
       ),
@@ -18,7 +14,6 @@ export default function MainScreen({ navigation }) {
 
   const handleLogout = () => {
     const executeLogout = () => {
-      // 로그인 화면으로 교체 (뒤로가기 방지)
       navigation.replace('Login');
     };
 
@@ -44,22 +39,37 @@ export default function MainScreen({ navigation }) {
       <Text style={styles.title}>🏭 스마트 현장 공장 레이아웃</Text>
       <Text style={styles.subtitle}>점검할 구역 또는 설비를 선택하세요.</Text>
 
-      {/* 기존 레이아웃 및 설비 버튼들 */}
       <View style={styles.zoneContainer}>
         <TouchableOpacity 
           style={styles.zoneCard}
-          onPress={() => navigation.navigate('Checklist', { zoneName: 'A구역 (모터 및 펌프)' })}
+          onPress={() => navigation.navigate('Checklist', { zoneName: '1호 모터 설비' })}
         >
-          <Text style={styles.zoneTitle}>A구역: 모터 / 펌프</Text>
-          <Text style={styles.zoneDesc>상태 양호 - 점검 대기중</Text>
+          <Text style={styles.zoneTitle}>1호 모터 설비</Text>
+          <Text style={styles.zoneDesc}>상태 양호 - 점검 대기중</Text>
         </TouchableOpacity>
 
         <TouchableOpacity 
           style={styles.zoneCard}
-          onPress={() => navigation.navigate('Checklist', { zoneName: 'B구역 (컨베이어 및 프레스)' })}
+          onPress={() => navigation.navigate('Checklist', { zoneName: '메인 펌프 설비' })}
         >
-          <Text style={styles.zoneTitle}>B구역: 컨베이어 / 프레스</Text>
+          <Text style={styles.zoneTitle}>메인 펌프 설비</Text>
+          <Text style={styles.zoneDesc}>상태 양호 - 점검 대기중</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={styles.zoneCard}
+          onPress={() => navigation.navigate('Checklist', { zoneName: 'A라인 컨베이어' })}
+        >
+          <Text style={styles.zoneTitle}>A라인 컨베이어</Text>
           <Text style={styles.zoneDesc}>점검 필요 항목 있음</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={styles.zoneCard}
+          onPress={() => navigation.navigate('Checklist', { zoneName: '유압 프레스 설비' })}
+        >
+          <Text style={styles.zoneTitle}>유압 프레스 설비</Text>
+          <Text style={styles.zoneDesc}>상태 양호 - 점검 대기중</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
