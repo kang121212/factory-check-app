@@ -1,89 +1,43 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from 'react-native';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+import LoginScreen from './src/screens/LoginScreen';
+import RegisterScreen from './src/screens/RegisterScreen';
+import MainScreen from './src/screens/MainScreen';
+import ChecklistScreen from './src/screens/ChecklistScreen';
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
-  const [id, setId] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleLogin = () => {
-    if (!id || !password) {
-      Alert.alert('알림', '사원번호와 비밀번호를 입력해주세요.');
-      return;
-    }
-    Alert.alert('로그인 성공', `${id}님 환영합니다!`);
-  };
-
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>현장 설비 체크리스트</Text>
-      <Text style={styles.subtitle}>사원 인증 및 로그인</Text>
-
-      <TextInput
-        style={styles.input}
-        placeholder="사원번호"
-        placeholderTextColor="#888"
-        value={id}
-        onChangeText={setId}
-      />
-
-      <TextInput
-        style={styles.input}
-        placeholder="비밀번호"
-        placeholderTextColor="#888"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
-
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>로그인</Text>
-      </TouchableOpacity>
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Login">
+        {/* 로그인 화면 (헤더 숨김) */}
+        <Stack.Screen 
+          name="Login" 
+          component={LoginScreen} 
+          options={{ headerShown: false }}
+        />
+        {/* 회원가입 화면 */}
+        <Stack.Screen 
+          name="Register" 
+          component={RegisterScreen} 
+          options={{ title: '회원가입' }}
+        />
+        {/* 메인 공장 레이아웃 화면 */}
+        <Stack.Screen 
+          name="Main" 
+          component={MainScreen} 
+          options={{ title: '공장 구역 레이아웃', headerBackVisible: false }}
+        />
+        {/* 설비 점검 체크리스트 화면 */}
+        <Stack.Screen 
+          name="Checklist" 
+          component={ChecklistScreen} 
+          options={{ title: '설비 점검 체크리스트' }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f6fa',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#2f3640',
-    marginBottom: 5,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: '#718093',
-    marginBottom: 30,
-  },
-  input: {
-    width: '100%',
-    height: 50,
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#dcdde1',
-    borderRadius: 8,
-    paddingHorizontal: 15,
-    fontSize: 16,
-    marginBottom: 15,
-  },
-  button: {
-    width: '100%',
-    height: 50,
-    backgroundColor: '#00a8ff',
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 10,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-});
