@@ -1,40 +1,51 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function LoginScreen({ navigation }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
+  const showAlert = (title, message) => {
+    if (Platform.OS === 'web') {
+      window.alert(`${title}: ${message}`);
+    } else {
+      Alert.alert(title, message);
+    }
+  };
+
   const handleLogin = async () => {
-    // 1. 빈 칸 검사
     if (!username.trim() || !password.trim()) {
-      Alert.alert('알림', '아이디와 비밀번호를 모두 입력해주세요.');
+      showAlert('알림', '아이디와 비밀번호를 모두 입력해주세요.');
       return;
     }
 
     try {
-      // 2. 저장된 회원 정보 불러오기
-      const savedUser = await AsyncStorage.getItem('@user_account');
+      let savedUser = null;
+      
+      if (Platform.OS === 'web') {
+        savedUser = localStorage.getItem('@user_account');
+      } else {
+        savedUser = await AsyncStorage.getItem('@user_account');
+      }
       
       if (!savedUser) {
-        Alert.alert('로그인 실패', '등록된 계정이 없습니다. 먼저 회원가입을 진행해주세요.');
+        showAlert('로그인 실패', '등록된 계정이 없습니다. 회원가입을 진행해주세요.');
         return;
       }
 
       const user = JSON.parse(savedUser);
 
-      // 3. 아이디와 비밀번호 일치 여부 확인
       if (user.username === username && user.password === password) {
-        // 성공 시 입력창 초기화 후 메인으로 이동
         setUsername('');
         setPassword('');
         navigation.replace('Main');
       } else {
-        Alert.alert('로그인 실패', '아이디 또는 비밀번호가 올바르지 않습니다.');
+        showAlert('로그인 실패', '아이디 또는 비밀번호가 올바르지 않습니다.');
       }
     } catch (e) {
-      Alert.alert('오류', '로그인 처리 중 문제가 발생했습니다.');
+      console.error(e);
+      showAlert('오류', '로그인 처리 중 문제가 발생했습니다.');
     }
   };
 
@@ -61,14 +72,14 @@ export default function LoginScreen({ navigation }) {
       />
 
       <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-        <Text style={styles.buttonText}>로그인</Text>
+        <Text style={styles.buttonText}>로그인하기</Text>
       </TouchableOpacity>
 
       <TouchableOpacity 
-        style={styles.registerButton} 
+        style={styles.registerLinkButton} 
         onPress={() => navigation.navigate('Register')}
       >
-        <Text style={styles.registerText}>계정이 없으신가요? 회원가입하기</Text>
+        <Text style={styles.registerLinkText}>계정이 없으신가요? 신규 사원 등록</Text>
       </TouchableOpacity>
     </View>
   );
@@ -81,6 +92,6 @@ const styles = StyleSheet.create({
   input: { backgroundColor: '#fff', padding: 14, borderRadius: 10, borderWidth: 1, borderColor: '#dcdde1', marginBottom: 12, fontSize: 15, color: '#2f3640' },
   loginButton: { backgroundColor: '#3742fa', padding: 15, borderRadius: 10, alignItems: 'center', marginTop: 10 },
   buttonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
-  registerButton: { marginTop: 20, alignItems: 'center' },
-  registerText: { color: '#57606f', fontSize: 14, fontWeight: '600' },
+  registerLinkButton: { marginTop: 20, alignItems: 'center', padding: 10 },
+  registerLinkText: { color: '#57606f', fontSize: 14, fontWeight: '600' },
 });
